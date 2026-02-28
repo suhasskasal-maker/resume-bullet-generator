@@ -1,12 +1,10 @@
 {
   "name": "resume-bullet-generator",
   "version": "1.0.0",
-  "description": "AI-powered resume bullet generator using Google Gemini",
+  "description": "AI-powered resume bullet generator using Claude",
   "type": "module",
-  "scripts": {
-    "dev": "vercel dev"
-  },
+  "scripts": {},
   "dependencies": {
-    "@google/generative-ai": "^0.24.0"
+    "@anthropic-ai/sdk": "^0.39.0"
   }
 }

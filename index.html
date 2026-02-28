@@ -304,6 +304,163 @@
       flex-shrink: 0;
     }
 
+    /* ── Loading state ── */
+    .btn-generate:disabled {
+      cursor: not-allowed;
+      opacity: 0.7;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .spinner {
+      width: 15px;
+      height: 15px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ── Error banner ── */
+    .error-banner {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      border-radius: var(--radius-md);
+      color: #f87171;
+      font-size: 13px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+    }
+
+    .error-banner.visible {
+      display: flex;
+    }
+
+    .error-banner svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    /* ── Copy success flash ── */
+    .btn-copy.copied {
+      background: rgba(62, 207, 142, 0.12);
+      border-color: var(--success);
+      color: var(--success);
+    }
+
+    /* ── Password gate ── */
+    .gate-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-base);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+    }
+
+    .gate-overlay.hidden {
+      display: none;
+    }
+
+    .gate-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 40px 36px;
+      width: 100%;
+      max-width: 380px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      text-align: center;
+    }
+
+    .gate-card h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .gate-card h2 span {
+      color: var(--accent);
+    }
+
+    .gate-card p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: -10px;
+    }
+
+    .gate-input {
+      width: 100%;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 14px;
+      padding: 12px 16px;
+      outline: none;
+      text-align: center;
+      letter-spacing: 0.05em;
+      transition: border-color 0.18s, box-shadow 0.18s;
+    }
+
+    .gate-input:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.18);
+    }
+
+    .gate-input.error {
+      border-color: rgba(239, 68, 68, 0.6);
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+    }
+
+    .btn-unlock {
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 12px;
+      cursor: pointer;
+      transition: background 0.18s, box-shadow 0.18s;
+      box-shadow: 0 4px 14px rgba(79, 142, 247, 0.28);
+    }
+
+    .btn-unlock:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-unlock:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .gate-error {
+      font-size: 12px;
+      color: #f87171;
+      min-height: 16px;
+    }
+
     /* ── Footer ── */
     footer {
       text-align: center;
@@ -314,6 +471,23 @@
   </style>
 </head>
 <body>
+
+  <!-- Password gate -->
+  <div class="gate-overlay" id="gateOverlay">
+    <div class="gate-card">
+      <h2>Resume <span>Bullet</span> Generator</h2>
+      <p>Enter the password to continue.</p>
+      <input
+        class="gate-input"
+        id="gateInput"
+        type="password"
+        placeholder="Password"
+        autocomplete="current-password"
+      />
+      <button class="btn-unlock" id="unlockBtn">Unlock</button>
+      <div class="gate-error" id="gateError"></div>
+    </div>
+  </div>
 
   <header>
     <h1>Resume <span>Bullet</span> Generator</h1>
@@ -377,6 +551,14 @@
       </div>
 
       <div class="output-body">
+        <div class="error-banner" id="errorBanner" role="alert">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <span id="errorMessage"></span>
+        </div>
         <div class="output-placeholder" id="outputPlaceholder">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -395,8 +577,181 @@
   </div>
 
   <footer>
-    <p>Powered by Claude &mdash; Resume Bullet Generator</p>
+    <p>Powered by Claude Sonnet &mdash; Resume Bullet Generator</p>
   </footer>
+
+  <script>
+    /* ── Password gate ── */
+    const gateOverlay = document.getElementById('gateOverlay');
+    const gateInput   = document.getElementById('gateInput');
+    const unlockBtn   = document.getElementById('unlockBtn');
+    const gateError   = document.getElementById('gateError');
+
+    if (sessionStorage.getItem('authed') === '1') {
+      gateOverlay.classList.add('hidden');
+    }
+
+    async function tryUnlock() {
+      const password = gateInput.value;
+      if (!password) return;
+
+      unlockBtn.disabled = true;
+      unlockBtn.textContent = 'Checking…';
+      gateError.textContent = '';
+      gateInput.classList.remove('error');
+
+      try {
+        const res  = await fetch('/api/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password }),
+        });
+        const data = await res.json();
+
+        if (data.ok) {
+          sessionStorage.setItem('authed', '1');
+          gateOverlay.classList.add('hidden');
+        } else {
+          gateError.textContent = 'Incorrect password. Try again.';
+          gateInput.classList.add('error');
+          gateInput.select();
+        }
+      } catch {
+        gateError.textContent = 'Something went wrong. Please try again.';
+      } finally {
+        unlockBtn.disabled = false;
+        unlockBtn.textContent = 'Unlock';
+      }
+    }
+
+    unlockBtn.addEventListener('click', tryUnlock);
+    gateInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') tryUnlock(); });
+
+    /* ── Main app ── */
+    const generateBtn     = document.getElementById('generateBtn');
+    const copyBtn         = document.getElementById('copyBtn');
+    const jobDescEl       = document.getElementById('jobDescription');
+    const experienceEl    = document.getElementById('workExperience');
+    const bulletList      = document.getElementById('bulletList');
+    const placeholder     = document.getElementById('outputPlaceholder');
+    const errorBanner     = document.getElementById('errorBanner');
+    const errorMessage    = document.getElementById('errorMessage');
+
+    // SVG icons reused in button states
+    const ICON_LAYERS = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+      <path d="M2 17l10 5 10-5"/>
+      <path d="M2 12l10 5 10-5"/>
+    </svg>`;
+    const ICON_COPY = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+    </svg>`;
+    const ICON_CHECK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>`;
+
+    // Track current bullets for clipboard
+    let currentBullets = [];
+
+    /* ── Helpers ── */
+    function setLoading(on) {
+      if (on) {
+        generateBtn.disabled = true;
+        generateBtn.innerHTML = `<span class="spinner"></span> Generating…`;
+      } else {
+        generateBtn.disabled = false;
+        generateBtn.innerHTML = `${ICON_LAYERS} Generate Bullets`;
+      }
+    }
+
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorBanner.classList.add('visible');
+    }
+
+    function clearError() {
+      errorBanner.classList.remove('visible');
+      errorMessage.textContent = '';
+    }
+
+    function renderBullets(bullets) {
+      bulletList.innerHTML = '';
+      bullets.forEach(text => {
+        const li = document.createElement('li');
+        li.className = 'bullet-item';
+        li.innerHTML = `<span class="bullet-marker"></span><span>${text}</span>`;
+        bulletList.appendChild(li);
+      });
+      placeholder.style.display = 'none';
+      bulletList.style.display  = 'flex';
+    }
+
+    /* ── Generate ── */
+    generateBtn.addEventListener('click', async () => {
+      const jobDescription = jobDescEl.value.trim();
+      const experience     = experienceEl.value.trim();
+
+      if (!jobDescription || !experience) {
+        showError('Please fill in both the Job Description and Your Work Experience before generating.');
+        return;
+      }
+
+      clearError();
+      setLoading(true);
+      currentBullets = [];
+
+      try {
+        const res = await fetch('/api/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ jobDescription, experience }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || `Server error (${res.status})`);
+        }
+
+        if (!Array.isArray(data.bullets) || data.bullets.length === 0) {
+          throw new Error('No bullets were returned. Please try again.');
+        }
+
+        currentBullets = data.bullets;
+        renderBullets(currentBullets);
+
+      } catch (err) {
+        showError(err.message || 'Something went wrong. Please try again.');
+        // Restore placeholder if no bullets are shown yet
+        if (currentBullets.length === 0) {
+          bulletList.style.display  = 'none';
+          placeholder.style.display = '';
+        }
+      } finally {
+        setLoading(false);
+      }
+    });
+
+    /* ── Copy to Clipboard ── */
+    copyBtn.addEventListener('click', async () => {
+      if (currentBullets.length === 0) return;
+
+      const text = currentBullets.map(b => `• ${b}`).join('\n');
+
+      try {
+        await navigator.clipboard.writeText(text);
+        copyBtn.classList.add('copied');
+        copyBtn.innerHTML = `${ICON_CHECK} Copied!`;
+        setTimeout(() => {
+          copyBtn.classList.remove('copied');
+          copyBtn.innerHTML = `${ICON_COPY} Copy to Clipboard`;
+        }, 2000);
+      } catch {
+        showError('Could not access clipboard. Please copy the bullets manually.');
+      }
+    });
+  </script>
 
 </body>
 </html>
