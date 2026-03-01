@@ -43,6 +43,9 @@ Example of what NOT to do: 'Owned complete product lifecycle for platform transf
 
 Example of what TO do: 'Owned foundational platform layers including onboarding flows, access control, and reporting infrastructure, redesigning the registration and onboarding system across 6 entry modes to resolve systematic data capture gaps resulting in 30% accuracy improvement' — this mirrors JD language and proves the skill with specifics.
 
+CONCISENESS AND STRUCTURE RULES:
+Keep each bullet concise — maximum 20-25 words. Structure: strong action verb + what was done + one key result or metric. Do not chain multiple achievements into a single bullet. If a JD requirement has multiple proof points, split them into separate bullets. Every word must earn its place — cut filler, cut adjectives, cut anything a recruiter would skip over.
+
 Output one clean list of bullets. Each bullet should start with a strong action verb and be optimized for both ATS keyword scanning and human readability.
 
 JOB DESCRIPTION:
